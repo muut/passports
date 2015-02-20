@@ -44,8 +44,8 @@ error (or null), an ID, and optionally some configuration parameters for
 
 ```javascript
 passports._getConfig = function _getConfig(req, cb) {
-  cb(null, req.host, {
-    realm: "Please log in to " + req.host,
+  cb(null, req.hostname, {
+    realm: "Please log in to " + req.hostname,
   });
 };
 ```

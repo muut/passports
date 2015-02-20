@@ -1,19 +1,21 @@
 #!/usr/bin/env node
 
 var express = require("express"),
-    Passpack = require("passpack"),
+    Passports = require("passports"),
     Passport = require("passport").Passport,
-    BasicStrategy = require("passport-http").BasicStrategy;
+    BasicStrategy = require("passport-http").BasicStrategy,
+    session = require('express-session'),
+    cookieParser = require('cookie-parser');
 
-var passpack = new Passpack();
+var passports = new Passports();
 
-passpack._getConfig = function _getConfig(req, cb) {
-  return cb(null, req.host, {
-    realm: req.host,
+passports._getConfig = function _getConfig(req, cb) {
+  return cb(null, req.hostname, {
+    realm: req.hostname,
   });
 };
 
-passpack._createInstance = function _createInstance(options, cb) {
+passports._createInstance = function _createInstance(options, cb) {
   var instance = new Passport();
 
   instance.use("basic", new BasicStrategy(options, function(name, password, done) {
@@ -36,14 +38,14 @@ passpack._createInstance = function _createInstance(options, cb) {
 var app = express();
 
 app.use(express.logger());
-app.use(express.cookieParser());
-app.use(express.session({secret: "keyboard cat"}));
-app.use(passpack.attach());
-app.use(passpack.middleware("initialize"));
-app.use(passpack.middleware("session"));
+app.use(cookieParser());
+app.use(session({secret: "keyboard cat"}));
+app.use(passports.attach());
+app.use(passports.middleware("initialize"));
+app.use(passports.middleware("session"));
 app.use(app.router);
 
-app.get("/login", passpack.middleware("authenticate", "basic", {
+app.get("/login", passports.middleware("authenticate", "basic", {
   successRedirect: "/",
 }));
 
