@@ -175,8 +175,8 @@ var express = require("express"),
 var passports = new Passports();
 
 passports._getConfig = function _getConfig(req, cb) {
-  return cb(null, req.host, {
-    realm: req.host,
+  return cb(null, req.hostname, {
+    realm: req.hostname,
   });
 };
 
